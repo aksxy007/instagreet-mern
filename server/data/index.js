@@ -11,6 +11,22 @@ const userIds = [
   new mongoose.Types.ObjectId(),
 ];
 
+const comments=[
+  {
+    userId:userIds[1],
+    firstName: "Steve",
+    lastName: "Ralph",
+    userPicturePath:"p3.jpeg",
+    text:"Beautifull!",
+    likes:new Map([
+      [userIds[1], true],
+      [userIds[2], true],
+      [userIds[3], true],
+      [userIds[4], true],
+    ])
+  } 
+]
+
 export const users = [
   {
     _id: userIds[0],
@@ -159,9 +175,7 @@ export const posts = [
       [userIds[4], true],
     ]),
     comments: [
-      "random comment",
-      "another random comment",
-      "yet another random comment",
+      comments[0]
     ],
   },
   {
@@ -181,10 +195,7 @@ export const posts = [
       [userIds[2], true],
     ]),
     comments: [
-      "one more random comment",
-      "and another random comment",
-      "no more random comments",
-      "I lied, one more random comment",
+     comments[0]
     ],
   },
   {
@@ -204,11 +215,7 @@ export const posts = [
       [userIds[5], true],
     ]),
     comments: [
-      "one more random comment",
-      "I lied, one more random comment",
-      "I lied again, one more random comment",
-      "Why am I doing this?",
-      "I'm bored",
+      comments[0]
     ],
   },
   {
@@ -227,12 +234,7 @@ export const posts = [
       [userIds[3], true],
     ]),
     comments: [
-      "I lied again, one more random comment",
-      "Why am I doing this?",
-      "I'm bored",
-      "I'm still bored",
-      "All I want to do is play video games",
-      "I'm going to play video games",
+      comments[0]
     ],
   },
   {
@@ -252,11 +254,7 @@ export const posts = [
       [userIds[7], true],
     ]),
     comments: [
-      "I lied again, one more random comment",
-      "Why am I doing this?",
-      "Man I'm bored",
-      "What should I do?",
-      "I'm going to play video games",
+      comments[0]
     ],
   },
   {
@@ -275,11 +273,7 @@ export const posts = [
     ]),
 
     comments: [
-      "Can I play video games now?",
-      "No let's actually study",
-      "Never mind, I'm going to play video games",
-      "Stop it.",
-      "Michael, stop it.",
+      comments[0]
     ],
   },
 ];

@@ -18,6 +18,7 @@ import WidgetWrapper from "components/WidgetWrapper";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state";
+import CommentWidget from "./CommentWidget";
 
 const PostWidget = ({
   postId,
@@ -39,7 +40,7 @@ const PostWidget = ({
   const [isComments, setIsComments] = useState(false);
 
   const { palette } = useTheme();
-  const primary = palette.primary.medium;
+  const primary = palette.primary.main;
   const main = palette.neutral.main;
 
 
@@ -104,14 +105,7 @@ const PostWidget = ({
       </FlexBetween>
       {isComments && (
         <Box mt="0.5rem">
-          {comments.map((comment, i) => (
-            <Box key={`${name}-${i}`}>
-              <Divider />
-              <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                {comment}
-              </Typography>
-            </Box>
-          ))}
+          <CommentWidget comments={comments} postId={postId}/>
         </Box>
       )}
     </WidgetWrapper>

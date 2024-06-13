@@ -38,7 +38,7 @@ export const authSlice=createSlice(
                     return post;
                 })
                 state.posts = updatePosts;
-            }
+            },
         }
     }
 )
