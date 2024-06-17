@@ -54,11 +54,11 @@ const Form = () => {
     const register = async (values, onSubmitProps)=>{
         const formData = new FormData();
         for(let value in values){
-            console.log(value)
+            // console.log(value)
             formData.append(value,values[value])
         }
         formData.append('picturePath',values.picture.name)
-        console.log("Form data: ",formData)
+        // console.log("Form data: ",formData)
 
         const savedUserResponse = await fetch(
             "http://localhost:3001/auth/register",
@@ -69,7 +69,7 @@ const Form = () => {
         )
         
         const savedUser = await savedUserResponse.json();
-        console.log(savedUser)
+        // console.log(savedUser)
         onSubmitProps.resetForm();
 
         if (savedUser){
@@ -93,7 +93,7 @@ const Form = () => {
         )
 
         const loggedIn = await loggedInResponse.json();
-        console.log("loggedIn Data",loggedIn);
+        // console.log("loggedIn Data",loggedIn);
         onSubmitProps.resetForm();
 
         if (loggedIn){

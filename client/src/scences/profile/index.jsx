@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom'
 import Navbar from 'scences/navbar';
-import AdvertWigdet from 'scences/widgets/AdvertWigdet';
+import AdvertWigdet from 'scences/widgets/AdvertWidget';
 import FriendListWidget from 'scences/widgets/FriendListWidget';
 import MyPostWidget from 'scences/widgets/MyPostWidget';
 import PostsWidget from 'scences/widgets/PostsWidget';
@@ -12,7 +12,7 @@ import UserWidget from 'scences/widgets/UserWidget';
 const Profile = () => {
   const [user,setUser] = useState(null)
   const {userId} = useParams();
-  const token = useSelector((state)=>state.token)
+  const token = useSelector((state)=>state.auth.token)
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)")
 
   const getUser = async () => {

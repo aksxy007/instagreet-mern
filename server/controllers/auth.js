@@ -15,7 +15,7 @@ export const register = async(req,res)=>{
             location,
             occupation
         }=req.body;
-        console.log(friends)
+        // console.log(friends)
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ error: 'User already registered with this email' });

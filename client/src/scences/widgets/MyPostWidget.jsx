@@ -31,8 +31,8 @@ const MyPostWidget = ({ picturePath }) => {
   const [image, setImage] = useState(null);
   const [post, setPost] = useState("");
   const { palette } = useTheme();
-  const { _id } = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
+  const { _id } = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.token);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
@@ -53,7 +53,7 @@ const MyPostWidget = ({ picturePath }) => {
     });
 
     const posts = await response.json();
-    console.log(posts)
+    // console.log(posts)
     dispatch(setPosts({ posts }));
     setImage(null);
     setPost("");
@@ -73,6 +73,7 @@ const MyPostWidget = ({ picturePath }) => {
             borderRadius: "2rem",
             padding: "1rem 2rem",
           }}
+          fullWidth
         />
       </FlexBetween>
       {isImage && (

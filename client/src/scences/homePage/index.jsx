@@ -5,12 +5,13 @@ import Navbar from 'scences/navbar'
 import UserWidget from 'scences/widgets/UserWidget'
 import MyPostWidget from 'scences/widgets/MyPostWidget'
 import PostsWidget from 'scences/widgets/PostsWidget'
-import AdvertWigdet from 'scences/widgets/AdvertWigdet'
+import AdvertWigdet from 'scences/widgets/AdvertWidget'
 import FriendListWidget from 'scences/widgets/FriendListWidget'
+import ChatPage from 'scences/ChatPage'
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)")
-  const {_id,picturePath} = useSelector((state)=>state.user);
+  const {_id,picturePath} = useSelector((state)=>state.auth.user);
 
 
   return (
@@ -33,8 +34,9 @@ const HomePage = () => {
         {isNonMobileScreens && <Box flexBasis="26%">
             <AdvertWigdet/> 
             <Box m="2rem 0"/> 
-            <FriendListWidget userId={_id}/>        
+            <FriendListWidget userId={_id}/>      
           </Box>}
+        
       </Box>
     </Box>
   )

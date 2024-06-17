@@ -3,7 +3,7 @@ import {styled} from "@mui/system"
 
 const FlexEnd=styled(Box)({
     display:"flex",
-    justifyContent:"end",
+    justifyContent:"flex-end",
     alignItems:"center"
 })
 

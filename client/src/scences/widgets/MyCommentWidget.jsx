@@ -14,8 +14,8 @@ import { setPost } from 'state'
   const dispatch = useDispatch();
   const [comment, setComment] = useState("");
   const { palette } = useTheme();
-  const { _id,firstName,lastName,picturePath } = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
+  const { _id,firstName,lastName,picturePath } = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.token);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
@@ -30,7 +30,7 @@ import { setPost } from 'state'
       body: JSON.stringify({ userId: _id,firstName:firstName,lastName:lastName,text:comment,userPicturePath:picturePath })
       })
       const data = await response.json();
-      console.log(data)
+      // console.log(data)
       dispatch(setPost({post:data}))
       setComment("")
     } 
@@ -50,6 +50,7 @@ import { setPost } from 'state'
           borderRadius: "2rem",
           padding: "0.5rem 1rem",
         }}
+        fullWidth
       />
     </FlexBetween>
     <Divider sx={{ margin: "1.25rem 0" }} />

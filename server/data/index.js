@@ -11,6 +11,13 @@ const userIds = [
   new mongoose.Types.ObjectId(),
 ];
 
+const chatIds = [
+  new mongoose.Types.ObjectId(),
+  new mongoose.Types.ObjectId(),
+  new mongoose.Types.ObjectId(),
+  new mongoose.Types.ObjectId(),
+];
+
 const comments=[
   {
     userId:userIds[1],
@@ -275,5 +282,96 @@ export const posts = [
     comments: [
       comments[0]
     ],
+  },
+];
+
+
+
+export const messages = [
+  // Messages for chatIds[0]
+  {
+    chatId: chatIds[0],
+    sender: userIds[1],
+    message: "Hey there!",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    chatId: chatIds[0],
+    sender: userIds[2],
+    message: "Hello! How are you?",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+
+  // Messages for chatIds[1]
+  {
+    chatId: chatIds[1],
+    sender: userIds[3],
+    message: "Hi! What's up?",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    chatId: chatIds[1],
+    sender: userIds[4],
+    message: "Not much, just working. You?",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+
+  // Messages for chatIds[2]
+  {
+    chatId: chatIds[2],
+    sender: userIds[5],
+    message: "Good morning!",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    chatId: chatIds[2],
+    sender: userIds[6],
+    message: "Morning! How's it going?",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+
+  // Messages for chatIds[3]
+  {
+    chatId: chatIds[3],
+    sender: userIds[0],
+    message: "Hey!",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    chatId: chatIds[3],
+    sender: userIds[7],
+    message: "Hi! Long time no see!",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+export const chats = [
+  {
+    _id: chatIds[0],
+    members: { senderId: userIds[1], receiverId: userIds[2] },
+    lastMessage: messages.find(msg => msg.chatId === chatIds[0])._id,
+  },
+  {
+    _id: chatIds[1],
+    members: { senderId: userIds[3], receiverId: userIds[4] },
+    lastMessage: messages.find(msg => msg.chatId === chatIds[1])._id,
+  },
+  {
+    _id: chatIds[2],
+    members: { senderId: userIds[5], receiverId: userIds[6] },
+    lastMessage: messages.find(msg => msg.chatId === chatIds[2])._id,
+  },
+  {
+    _id: chatIds[3],
+    members: { senderId: userIds[0], receiverId: userIds[7] },
+    lastMessage: messages.find(msg => msg.chatId === chatIds[3])._id,
   },
 ];

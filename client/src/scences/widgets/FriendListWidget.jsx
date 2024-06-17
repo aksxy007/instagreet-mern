@@ -9,8 +9,8 @@ import { setFriends } from "state";
 
 const FriendListWidget = ({ userId }) => {
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.token);
-  const friends = useSelector((state) => state.user.friends);
+  const token = useSelector((state) => state.auth.token);
+  const friends = useSelector((state) => state.auth.user.friends);
 
   const { palette } = useTheme();
 
@@ -29,7 +29,7 @@ const FriendListWidget = ({ userId }) => {
     getFriends()
   },[]) //eslint-disable-line react-hooks/exhaustive-deps
 
-  console.log(friends)
+  // console.log(friends)
 
   return (
     <WidgetWrapper>

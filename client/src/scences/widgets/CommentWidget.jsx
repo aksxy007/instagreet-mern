@@ -1,5 +1,5 @@
 import { useTheme } from "@emotion/react";
-import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
+import { Box, Button, Divider, IconButton, Typography, useMediaQuery } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
 import React from "react";
@@ -23,9 +23,11 @@ const CommentWidget = ({ comments, postId }) => {
   const mediumMain = palette.neutral.mediumMain;
   const primary = palette.primary.main;
 
-  
-  const user = useSelector((state) => state.user);
-  const token = useSelector((state)=>state.token)
+  const isNonMobileScreens = useMediaQuery("(min-width:1000px)")
+
+  const pad = isNonMobileScreens?"0.8rem":"0"
+  const user = useSelector((state) => state.auth.user);
+  const token = useSelector((state)=>state.auth.token)
 
   const handleDeleteComment=async (commentId)=>{
     const response = await fetch(`http://localhost:3001/posts/${postId}/comments/${commentId}`,{
@@ -36,7 +38,7 @@ const CommentWidget = ({ comments, postId }) => {
     }})
 
     const updatePost = await response.json();
-    console.log("updatePost->comment",updatePost)
+    // console.log("updatePost->comment",updatePost)
     dispatch(setPost({post:updatePost}))
   }
 
@@ -51,7 +53,7 @@ const CommentWidget = ({ comments, postId }) => {
     });
 
     const updatedPost = await resposne.json();
-    console.log(updatedPost)
+    // console.log(updatedPost)
     dispatch(setPost({ post: updatedPost }));
   };
 
@@ -62,14 +64,15 @@ const CommentWidget = ({ comments, postId }) => {
           Comments
         </Typography>
       </Box>
-      <Box height="200px" overflow="auto" p="0.8rem">
+      <Box height="200px" overflow="auto" p={pad}>
         {comments.map((comment, i) => (
           <FlexBetween
+            
             gap="1rem"
             sx={{
               backgroundColor: palette.neutral.light,
               borderRadius: "0.5rem",
-              padding: "0.6rem 0.5rem",
+              padding: "0.3rem 0.2rem",
               margin: "0 0 0.5rem 0",
             }}
           >
@@ -84,8 +87,8 @@ const CommentWidget = ({ comments, postId }) => {
                 <Typography
                   color={main}
                   variant="h5"
-                  fontSize="1rem"
-                  fontWeight="400"
+                  fontSize={isNonMobileScreens?"1rem":"0.8rem"}
+                  fontWeight="500"
                   sx={{
                     "&:hover": {
                       color: palette.primary.dark,
@@ -96,19 +99,25 @@ const CommentWidget = ({ comments, postId }) => {
                   {`${comment.firstName} ${comment.lastName}`}
                 </Typography>
                 <Box>
-                  <Typography color={medium}>{comment.text}</Typography>
+                  <Typography color={medium}
+                  variant="h5"
+                  fontSize={isNonMobileScreens?"1rem":"0.7rem"}
+                  fontWeight="300">{comment.text}</Typography>
                 </Box>
               </Box>
             </FlexStart>
-            <FlexEnd>
+            <FlexEnd gap="0rem">
             <IconButton onClick={()=>patchCommentLike(comment._id)}>
               {Boolean(comment.likes[user._id]) ? (
-                <FavoriteOutlined sx={{ color: primary }} />
+                <FavoriteOutlined fontSize="0.9rem" sx={{ color: primary }} />
               ) : (
-                <FavoriteBorderOutlined />
+                <FavoriteBorderOutlined fontSize="0.9rem"/>
               )}
             </IconButton>
-            <Typography>{Object.keys(comment.likes).length}</Typography>
+            <Typography color={main}
+                  variant="h5"
+                  fontSize={isNonMobileScreens?"1rem":"0.8rem"}
+                  fontWeight="500">{Object.keys(comment.likes).length}</Typography>
             </FlexEnd>
 
             {comment?.userId === user?._id ? (

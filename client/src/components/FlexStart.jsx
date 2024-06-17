@@ -3,7 +3,7 @@ import {styled} from "@mui/system"
 
 const FlexStart=styled(Box)({
     display:"flex",
-    justifyContent:"start",
+    justifyContent:"flex-start",
     alignItems:"center"
 })
 

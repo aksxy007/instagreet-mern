@@ -9,6 +9,7 @@ import {
   Search,
 } from "@mui/icons-material";
 import {
+  Button,
   FormControl,
   IconButton,
   InputBase,
@@ -23,23 +24,30 @@ import FlexBetween from "components/FlexBetween";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import ChatPopup from "scences/ChatsPage/ChatModel";
 import { setLogout, setMode } from "state";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.auth.user);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
-  
+
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
   const background = theme.palette.background.default;
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
-  console.log("user",user)
+  // console.log("user", user);
   const fullName = `${user?.firstName} ${user?.lastName}`;
+
+  const [isChatPopupOpen, setIsChatPopupOpen] = useState(false);
+
+  const toggleChatPopup = () => {
+    setIsChatPopupOpen(!isChatPopupOpen);
+  };
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
@@ -55,6 +63,7 @@ const Navbar = () => {
               cursor: "pointer",
             },
           }}
+          
         >
           InstaGreet
         </Typography>
@@ -65,7 +74,7 @@ const Navbar = () => {
             gap="3rem"
             padding="0.1rem 0.3rem"
           >
-            <InputBase placeholder="Search...." />
+            <InputBase placeholder="Search...." fullWidth/>
             <IconButton>
               <Search />
             </IconButton>
@@ -83,9 +92,15 @@ const Navbar = () => {
               <LightMode sx={{ color: dark, fontSize: "25px" }} />
             )}
           </IconButton>
-          <Message sx={{ fontSize: "25px" }} />
-          <Notifications sx={{ fontSize: "25px" }} />
-          <Help sx={{ fontSize: "25px" }} />
+          <Button onClick={toggleChatPopup}>
+              <ChatPopup/>
+            </Button>
+            <Button>
+              <Notifications sx={{ fontSize: "25px" }} />
+            </Button>
+            <Button>
+              <Help sx={{ fontSize: "25px" }} />
+            </Button>
           <FormControl variant="standard" value={fullName}>
             <Select
               value={fullName}
@@ -157,9 +172,15 @@ const Navbar = () => {
                 <LightMode sx={{ color: dark, fontSize: "25px" }} />
               )}
             </IconButton>
-            <Message sx={{ fontSize: "25px" }} />
-            <Notifications sx={{ fontSize: "25px" }} />
-            <Help sx={{ fontSize: "25px" }} />
+            <Button onClick={toggleChatPopup}>
+              <ChatPopup />
+            </Button>
+            <Button>
+              <Notifications sx={{ fontSize: "25px" }} />
+            </Button>
+            <Button>
+              <Help sx={{ fontSize: "25px" }} />
+            </Button>
             <FormControl variant="standard" value={fullName}>
               <Select
                 value={fullName}

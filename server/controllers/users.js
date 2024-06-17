@@ -1,4 +1,3 @@
-import { response } from "express";
 import User from "../models/User.js";
 
 /*READ */
@@ -6,6 +5,15 @@ export const getUser = async (req,res)=>{
     try {
         const {id} = req.params;
         const user = await User.findById(id);
+        res.status(200).json(user)
+    } catch (error) {
+        res.status(404).json({error:error.message})
+    }
+}
+
+export const getAllUsers = async (req,res)=>{
+    try {
+        const user = await User.find({});
         res.status(200).json(user)
     } catch (error) {
         res.status(404).json({error:error.message})
@@ -36,8 +44,8 @@ export const addRemoveFriend = async (req,res)=>{
         const {id,friendId} = req.params;
         const user = await User.findById(id);
         const friend = await User.findById(friendId);
-        console.log(user)
-        console.log(friend)
+        // console.log(user)
+        // console.log(friend)
 
         if(user.friends.includes(friendId)){
             user.friends = user.friends.filter((id)=>id!==friendId)

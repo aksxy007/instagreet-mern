@@ -3,13 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setFriends } from 'state';
 import FlexBetween from './FlexBetween';
 import UserImage from './UserImage';
-import { Box, IconButton, Typography } from '@mui/material';
+import { Box, Divider, IconButton, Typography } from '@mui/material';
 import { PersonAddOutlined, PersonRemoveOutlined } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
-
-const Friend = ({friendId,name,subtitle,userPicturePath}) => {
+const FriendsSearch = ({friendId,name,subtitle,userPicturePath}) => {
     const dispatch = useDispatch()
     const navigate = useNavigate();
     const {_id} = useSelector((state)=>state.auth.user)
@@ -21,6 +20,8 @@ const Friend = ({friendId,name,subtitle,userPicturePath}) => {
     const primaryDark = palette.primary.dark;
     const main = palette.neutral.main;
     const medium = palette.neutral.medium;
+    const neutralLight = palette.neutral.light;
+    
     
 
     const isFriend =  friends.find((friend)=> friend._id === friendId);
@@ -37,50 +38,53 @@ const Friend = ({friendId,name,subtitle,userPicturePath}) => {
         const data = await resposne.json();
         dispatch(setFriends({friends:data}))
     }
-
-    return (
-    <FlexBetween>
-        <FlexBetween gap="1rem">
-            <UserImage image={userPicturePath}/>
+  return (
+    <FlexBetween mx="1rem" py="0.5rem" px="0.8rem" sx={{borderRadius:"0.75rem"}}>
+        <FlexBetween gap="0.6rem">
+            <UserImage size='45px' image={userPicturePath}/>
             <Box 
-                onClick={()=>{
-                    navigate(`/profile/${friendId}`)
-                    navigate(0);
-                }}
+                
             >
                 <Typography
-                    color={main}
+                    color={primaryDark}
                     variant='h5'
                     fontWeight='500'
+                    fontSize={'0.9rem'}
                     sx={{
                         "&:hover":{
-                            color:palette.primary.light,
+                            color:palette.primary.main,
                             cursor:"pointer"
                         }
                     }}
                 >
                     {name}
                 </Typography>
-                <Typography color={medium}>
+                <Typography textOverflow={"ellipsis"} fontSize={"0.8rem"} color={medium}>
                     {subtitle}
                 </Typography>
             </Box>
         </FlexBetween>
         <IconButton
+            
             onClick={()=>patchFriend()}
             sx={{
                 backgroundColor:primaryLight,
-                p:"0.6rem"
+                p:"0.6rem",
+                width:"30px",
+                height:"30px"
+                
             }}
         >
             {isFriend ?(
-                <PersonRemoveOutlined sx={{color:primaryDark}}/>
+                <PersonRemoveOutlined fontSize='0.8rem' sx={{color:primaryDark}}/>
             ):(
-                <PersonAddOutlined sx={{color:primaryDark}}/>
+                <PersonAddOutlined fontSize='0.8rem' sx={{color:primaryDark}}/>
             )}
         </IconButton>
     </FlexBetween>
+    
+    
   )
 }
 
-export default Friend
+export default FriendsSearch
