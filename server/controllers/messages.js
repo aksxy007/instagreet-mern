@@ -36,7 +36,8 @@ export const addMessageToChat = async (req, res) => {
         const message = new Message({
             chatId: chat._id,
             sender: senderId,
-            message: messageText
+            message: messageText,
+            read:false
         });
 
         await message.save();

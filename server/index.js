@@ -23,6 +23,7 @@ import Message from './models/Message.js';
 import {users,posts,chats,messages} from './data/index.js'
 import http from 'http'; // Import http module
 import { Server } from 'socket.io'; 
+import { read } from 'fs';
 
 let connected_users=[]
 
@@ -81,16 +82,17 @@ const removeUser=(socketId)=>{
 
 
 const getUser = (userId)=>{
-    console.log(connected_users)
-    console.log(connected_users.find(user=>user.userId===userId))
+    // console.log(connected_users)
+    // console.log(connected_users.find(user=>user.userId===userId))
     return connected_users.find(user=>user.userId===userId)
 }
 
-const saveMessageIfUserOffline = async (chatId,senderId,receiverId,messageText,socket)=>{
+const createMessage = async (chatId,senderId,receiverId,messageText,socket)=>{
     const message = new Message({
         chatId:chatId,
         sender:senderId,
-        message:messageText
+        message:messageText,
+        read:false,
     }
     );
         await message.save();
@@ -102,26 +104,23 @@ const saveMessageIfUserOffline = async (chatId,senderId,receiverId,messageText,s
         chat.lastMessage = message._id;
         await chat.save();
 
-        socket.emit("getMessage", {
-            chatId,
-            senderId,
-            messageText
-        });
+        return message;
 }
 
 io.on('connection',(socket)=>{
     //When connected
     console.log('A user connected')
-    
+
     //add user for online-offline
     socket.on("addUser",(userId)=>{
+        console.log("adding user...")
         addUser(userId,socket.id)
         console.log("connected_users",connected_users)
         io.emit("getUsers",connected_users)
     })
 
 
-    socket.on("sendMessage",({chatId,senderId,receiverId,messageText})=>{
+    socket.on("sendMessage",async ({chatId,senderId,receiverId,messageText,messageId})=>{
         console.log("senderId",senderId)
         console.log("receiverId",receiverId)
         const receiver = getUser(receiverId)
@@ -137,12 +136,53 @@ io.on('connection',(socket)=>{
             
             return;
           }
-        io.to(receiver.socketId).emit("getMessage",{
+        // const message= await createMessage(chatId,senderId,receiverId,messageText,socket)
+        
+        console.log("sending the message",messageText)
+        
+        io.to(receiver.socketId).emit("getMessage", {
+            messageId,
             chatId,
             senderId,
-            messageText
-        })
+            messageText,
+            read:false,
+        });
+        
+        const checkReadStatus = async () => {
+            const receiver = getUser(receiverId);
+            if (receiver) {
+              // Update message read status
+              await Message.findByIdAndUpdate(messageId, { read: true });
+              io.to(receiver.socketId).emit('messageReadUpdate', {
+                messageId,
+                chatId,
+              });
+              clearInterval(checkInterval); // Clear the interval if the receiver is connected
+            }
+          };
+      
+          const checkInterval = setInterval(checkReadStatus, 5000);
     })
+
+    //Message read or not ?
+    socket.on('messageRead', async ({ messageId, chatId, senderId, receiverId }) => {
+        try {
+            const message = await Message.findById(messageId);
+            const receiver = getUser(receiverId)
+            
+            if (message && receiver) {
+                message.read = true;
+                await message.save();
+
+                const sender = getUser(senderId);
+                if (sender) {
+                    io.to(sender.socketId).emit('messageReadUpdate', { messageId, chatId });
+                }
+            }
+        } catch (error) {
+            console.error('Error marking message as read:', error);
+        }
+    });
 
     //on disconnect
     socket.on('disconnect', () => {

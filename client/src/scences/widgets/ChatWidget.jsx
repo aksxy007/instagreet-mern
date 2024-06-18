@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SendIcon from "@mui/icons-material/Send";
-import { addMessage, setCurrentChat, setMessages } from "state/chatSlice";
+import { addMessage, markMessageAsRead, setCurrentChat, setMessages } from "state/chatSlice";
 import MessageWidget from "./MessageWidget";
 import ScrollableBox from "components/ScrollableBox";
 import Loader from "components/Loader";
@@ -42,13 +42,13 @@ const ChatWidget = ({ friendId, onBack, isExpanded }) => {
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
   const neutralLight = palette.neutral.light;
-  const [newMessage,setNewMassage] = useState("");
+  // const [newMessage,setNewMessage] = useState(null);
   const [messageText, setMessageText] = useState("");
   const [loading, setLoading] = useState(true);
   
   const currentChat = useSelector((state) => state.chat.currentChat);
-  const currentMessage = useSelector((state) => state.chat.messages)||[];
-
+  const currentMessages = useSelector((state) => state.chat.messages);
+  // const [currentChatMessages,setCurrentChatMessages] = useState(currentMessages)
   const userId = useSelector((state) => state.auth.user._id);
 
   const handleMessage = async () => {
@@ -68,12 +68,7 @@ const ChatWidget = ({ friendId, onBack, isExpanded }) => {
     // console.log("current chat", chat);
 
 
-    socket.current.emit('sendMessage', {
-      chatId:chat._id,
-      senderId: userId,
-      receiverId: friendId,
-      messageText: messageText,
-    });
+    
 
     const messageResponse = await fetch(`http://localhost:3001/message/`, {
       method: "POST",
@@ -89,11 +84,32 @@ const ChatWidget = ({ friendId, onBack, isExpanded }) => {
     });
 
     const message = await messageResponse.json();
-    // console.log("sent message", message);
-    dispatch(addMessage({ chatId: currentChat._id, message }));
 
+    socket.current.emit('sendMessage', {
+      chatId:chat._id,
+      senderId: userId,
+      receiverId: friendId,
+      messageText: messageText,
+      messageId:message._id
+    });
+    // console.log("sent message", message);
+    
+    dispatch(addMessage({chatId:chat._id,message}))
     setMessageText("");
   };
+
+  // const handleMessage = async () => {
+  //   if (!messageText.trim()) return;
+
+  //   socket.current.emit('sendMessage', {
+  //     chatId: currentChat._id,
+  //     senderId: userId,
+  //     receiverId: friendId,
+  //     messageText: messageText,
+  //   });
+
+  //   setMessageText("");
+  // };
 
   const getFriendUser = async () => {
     const response = await fetch(`http://localhost:3001/users/${friendId}`, {
@@ -144,49 +160,66 @@ const ChatWidget = ({ friendId, onBack, isExpanded }) => {
 
     const messages = await messageResponse.json();
     // console.log(messages);
+    
     dispatch(setMessages({ messages }));
   };
 
-  useEffect(()=>{
-    socket.current=io.connect('http://localhost:3001')
-    socket.current.on("getMessage",(data)=>{
-      dispatch(addMessage({
-        chatId: data.chatId,
-        message: { sender: data.senderId, message: data.messageText },
-      }));
-  });
-  return () => {
-    socket.current.disconnect();
-  };
-  },[dispatch])
-
-  useEffect(()=>{
-    socket.current.emit("addUser",userId)
-    socket.current.on("getUsers",(connected_users)=>console.log(connected_users))
-
-  },[userId])
-
-  
-  
   useEffect(() => {
+    socket.current=io.connect('http://localhost:3001')
+    socket.current.emit("addUser",userId)
+    socket.current.on("getUsers",(connected_users)=>console.log("connected_users",connected_users))
     getUser();
     getFriendUser();
     setPresentChat();
-  }, []);
+  }, [userId]);
 
+
+
+
+useEffect(()=>{
+  
+  socket.current.on("getMessage",(data)=>{
+    console.log("received from socket io",data.messageText)
+  const message = {
+    chatId:data.chatId,
+    sender:data.senderId,
+    message:data.messageText,
+    read:data.read,
+    messageId:data.messageId
+  }
+
+  dispatch(addMessage({chatId:data.chatId,message}))
+  socket.current.emit('messageRead', { messageId: data.messageId, chatId: data.chatId, senderId: userId, receiverId: friendId });
+  
+});
+
+
+socket.current.on("messageReadUpdate",({messageId,chatId})=>{
+  dispatch(markMessageAsRead({messageId,chatId}))
+})
+return () => {
+  socket.current.disconnect();
+};
+},[dispatch])
+
+
+// useEffect(()=>{
+//   newMessage && currentChat.users.senderId===newMessage.sender && setCurrentChatMessages((prev)=>[...prev,newMessage])
+// },[newMessage])
 
   useEffect(() => {
-      // Set chat data after fetching (example);
-      getCurrentUserChats(); 
-      setLoading(false); // Set loading to false after data is loaded
-  }, [currentChat]);
+    // Set chat data after fetching (example);
+    getCurrentUserChats(); 
+    setLoading(false); // Set loading to false after data is loaded
+}, [userId]);
 
 
-  if (friend === null || user === null || currentMessage===null) return null;
+  if (friend === null || user === null || currentMessages===null ) return null;
 
-  // console.log("current chat after load", currentChat);
+  console.log("current chat after load", currentChat);
   // console.log("current chat id", currentChat._id);
-  // console.log("current messsages", currentMessage);
+  console.log("current messsages", currentMessages);
+  // console.log("current chat messages",currentChatMessages)
 
   return (
     <>
@@ -234,7 +267,7 @@ const ChatWidget = ({ friendId, onBack, isExpanded }) => {
           mt={"1rem"}
           height={"60%"}
         >
-          {currentMessage?.map((message) => (
+          {currentMessages?.map((message) => (
             <MessageWidget message={message} user={user} friend={friend} />
           ))}
         </ScrollableBox>
